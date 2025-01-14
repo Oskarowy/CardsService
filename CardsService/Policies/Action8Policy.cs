@@ -4,7 +4,7 @@ namespace CardsService.Policies
 {
     public class Action8Policy : IActionPolicy
     {
-        public string ActionName => "ACTION5";
+        public string ActionName => "ACTION8";
 
         public bool IsAllowed(CardDetails cardDetails)
         {

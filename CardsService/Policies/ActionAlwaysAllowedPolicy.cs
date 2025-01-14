@@ -4,7 +4,7 @@ namespace CardsService.Policies
 {
     public class ActionAlwaysAllowedPolicy : IActionPolicy
     {
-        public virtual string ActionName => throw new NotImplementedException();
+        public virtual string ActionName => "";
 
         public bool IsAllowed(CardDetails cardDetails)
         {

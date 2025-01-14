@@ -30,7 +30,10 @@ namespace CardsService.UnitTests
                 var isPolicyAllowed = policy.IsAllowed(testedCard);
 
                 if (isPolicyAllowed)
+                {
                     Assert.Contains(policy.ActionName, allowedActions);
+                    Assert.StartsWith(policy.ActionName.ToLower(), policy.GetType().Name.ToLower());
+                }
                 else 
                     Assert.False(isPolicyAllowed);
             }
