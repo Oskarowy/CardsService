@@ -15,9 +15,11 @@ namespace CardsService.UnitTests
 
         [Theory]
         [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
-        public void Action8_Allow_ForAnyCardType_IfCardIsActive_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
+        public void Action8_Allow_ForAnyCardType_IfCardIsActiveInActiveOrderedBlocked_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
-            if (cardStatus != CardStatus.Active) return;
+            var availableStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered, CardStatus.Blocked };
+
+            if (!availableStatuses.Contains(cardStatus)) return;
 
             var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
 
