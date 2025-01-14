@@ -7,17 +7,19 @@ namespace CardsService.UnitTests
     public class Action1PolicyTests
     {
         private readonly Action1Policy _action1policy = new Action1Policy();
-        private readonly CardDetails _prepaidActiveCard;
 
         public Action1PolicyTests()
         {
-            _prepaidActiveCard = new CardDetails("123", CardType.Prepaid, CardStatus.Active, true);
         }
 
-        [Fact]
-        public void Action1_Allow_ForPrepaidCard_IfCardIsActive()
+        [Theory]
+        [InlineData(CardType.Prepaid)]
+        [InlineData(CardType.Debit)]
+        [InlineData(CardType.Credit)]
+        public void Action1_Allow_ForAnyCardType_IfCardIsActive(CardType cardType)
         {
-            Assert.True(_action1policy.IsAllowed(_prepaidActiveCard));
+            var testedCard = new CardDetails("123", cardType, CardStatus.Active, true);
+            Assert.True(_action1policy.IsAllowed(testedCard));
         }
 
         [Theory]
