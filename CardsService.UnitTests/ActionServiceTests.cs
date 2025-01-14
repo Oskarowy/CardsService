@@ -33,6 +33,23 @@ namespace CardsService.UnitTests
             Assert.Contains(_action1policy.ActionName, allowedActions);
         }
 
+        [Theory]
+        [InlineData(CardStatus.Inactive)]
+        [InlineData(CardStatus.Ordered)]
+        [InlineData(CardStatus.Restricted)]
+        [InlineData(CardStatus.Blocked)]
+        [InlineData(CardStatus.Closed)]
+        [InlineData(CardStatus.Expired)]
+        public void Action1_ShouldBeDeniedByService_IfPolicyIsNotAllowed(CardStatus cardStatus)
+        {
+            var testedCard = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+
+            var allowedActions = _actionService.GetAllowedActions(testedCard);
+
+            Assert.False(_action1policy.IsAllowed(testedCard));
+            Assert.DoesNotContain(_action1policy.ActionName, allowedActions);
+        }
+
         [Fact]
         public void Action2_ShouldBeReturnedByService_IfPolicyIsAllowed()
         {
