@@ -7,29 +7,30 @@ namespace CardsService.UnitTests
     public class Action2PolicyTests
     {
         private readonly Action2Policy _action2policy = new Action2Policy();
-        private readonly CardDetails _prepaidInactiveCard;
+        private string _cardNumber = "12345";
 
         public Action2PolicyTests()
         {
-            _prepaidInactiveCard = new CardDetails("123", CardType.Prepaid, CardStatus.Inactive, true);
-        }
-
-        [Fact]
-        public void Action2_Allow_ForPrepaidCard_IfCardIsInactive()
-        {
-            Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
         }
 
         [Theory]
-        [InlineData(CardStatus.Ordered)]
-        [InlineData(CardStatus.Active)]
-        [InlineData(CardStatus.Restricted)]
-        [InlineData(CardStatus.Blocked)]
-        [InlineData(CardStatus.Expired)]
-        [InlineData(CardStatus.Closed)]
-        public void Action2_Deny_ForPrepaidCard_IfCardIsNotInactive(CardStatus cardStatus)
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action2_Allow_ForAnyCardType_IfCardIsInactive_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
-            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            if (cardStatus != CardStatus.Inactive) return;
+
+            var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
+
+            Assert.True(_action2policy.IsAllowed(testedCard));
+        }
+
+        [Theory]
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action2_Deny_ForAnyCardType_IfCardIsOtherThanInactive_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
+        {
+            if (cardStatus == CardStatus.Inactive) return;
+
+            var cardDetails = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
 
             Assert.False(_action2policy.IsAllowed(cardDetails));
         }
