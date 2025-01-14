@@ -55,6 +55,15 @@ namespace CardsService.UnitTests
             Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
         }
 
+        [Fact]
+        public void Action2_ShouldBeReturnedByService_IfPolicyIsAllowed()
+        {
+            var allowedActions = _actionService.GetAllowedActions(_prepaidActiveCard);
+
+            Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
+            Assert.Contains(_action2policy.ActionName, allowedActions);
+        }
+
         [Theory]
         [InlineData(CardStatus.Ordered)]
         [InlineData(CardStatus.Active)]
