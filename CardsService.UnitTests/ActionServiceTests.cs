@@ -43,11 +43,25 @@ namespace CardsService.UnitTests
         #region Action2
         [Theory]
         [InlineData(CardStatus.Inactive)]
-        public void Action2_Allow_ForPrepaidCard_IfCardIsNotActive(CardStatus cardStatus)
+        public void Action2_Allow_ForPrepaidCard_IfCardIsInactive(CardStatus cardStatus)
         {
             var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
 
             Assert.True(_action2policy.IsAllowed(cardDetails));
+        }
+
+        [Theory]
+        [InlineData(CardStatus.Ordered)]
+        [InlineData(CardStatus.Active)]
+        [InlineData(CardStatus.Restricted)]
+        [InlineData(CardStatus.Blocked)]
+        [InlineData(CardStatus.Expired)]
+        [InlineData(CardStatus.Closed)]
+        public void Action2_Deny_ForPrepaidCard_IfCardIsNotInactive(CardStatus cardStatus)
+        {
+            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+
+            Assert.False(_action2policy.IsAllowed(cardDetails));
         }
         #endregion
     }
