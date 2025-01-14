@@ -58,5 +58,22 @@ namespace CardsService.UnitTests
             Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
             Assert.Contains(_action2policy.ActionName, allowedActions);
         }
+
+        [Theory]
+        [InlineData(CardStatus.Active)]
+        [InlineData(CardStatus.Ordered)]
+        [InlineData(CardStatus.Restricted)]
+        [InlineData(CardStatus.Blocked)]
+        [InlineData(CardStatus.Closed)]
+        [InlineData(CardStatus.Expired)]
+        public void Action2_ShouldBeDeniedByService_IfPolicyIsNotAllowed(CardStatus cardStatus)
+        {
+            var testedCard = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+
+            var allowedActions = _actionService.GetAllowedActions(testedCard);
+
+            Assert.False(_action2policy.IsAllowed(testedCard));
+            Assert.DoesNotContain(_action2policy.ActionName, allowedActions);
+        }
     }
 }
