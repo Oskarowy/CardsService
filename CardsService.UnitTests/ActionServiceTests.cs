@@ -14,8 +14,10 @@ namespace CardsService.UnitTests
         public void Action1_Allow_ForPrepaidCard_IfCardIsActive(CardStatus cardStatus)
         {
             var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            var allowedActions = _actionService.GetAllowedActions(cardDetails);
 
             Assert.True(_policy.IsAllowed(cardDetails));
+            Assert.Contains("ACTION1", allowedActions);
         }
 
         [Theory]
@@ -28,8 +30,10 @@ namespace CardsService.UnitTests
         public void Action1_Deny_ForPrepaidCard_IfCardIsNotActive(CardStatus cardStatus)
         {
             var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            var allowedActions = _actionService.GetAllowedActions(cardDetails);
 
             Assert.False(_policy.IsAllowed(cardDetails));
+            Assert.DoesNotContain("ACTION1", allowedActions);
         }
     }
 }
