@@ -33,7 +33,7 @@ namespace CardsService.UnitTests
         }
 
         [Fact]
-        public void Action1_NameInPolicy_ShouldBeCorrect()
+        public void ActionNameInPolicy_ShouldBeCorrect()
         {
             Assert.Equal("ACTION1", _policy.ActionName);
         }
