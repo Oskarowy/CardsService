@@ -1,3 +1,7 @@
+using CardsService.Model;
+
+namespace CardsService.Services;
+
 public record CardDetails(string CardNumber, CardType CardType, CardStatus CardStatus, bool IsPinSet);
 public class CardService
 {

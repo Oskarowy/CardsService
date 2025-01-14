@@ -1,3 +1,5 @@
+namespace CardsService.Model;
+
 public enum CardStatus
 {
     Ordered,
