@@ -10,7 +10,11 @@ public class ActionService
     public List<string> GetAllowedActions(CardDetails cardDetails) 
     {
         string action1name = "ACTION1";
+        var result = new List<string>();
 
-        return new List<string> { action1name };
+        if (cardDetails.CardStatus == Model.CardStatus.Active)
+            result.Add(action1name);
+
+        return result;
     }
 }
