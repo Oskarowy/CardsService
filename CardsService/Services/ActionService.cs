@@ -1,20 +1,20 @@
-﻿namespace CardsService.Services;
+﻿using CardsService.Policies;
+
+namespace CardsService.Services;
 
 public class ActionService
 {
-    public ActionService()
+    private readonly IEnumerable<IActionPolicy> _actionPolicies;
+    public ActionService(IEnumerable<IActionPolicy> actionPolicies)
     {
-       
+       _actionPolicies = actionPolicies;
     }
 
     public List<string> GetAllowedActions(CardDetails cardDetails) 
     {
-        string action1name = "ACTION1";
-        var result = new List<string>();
-
-        if (cardDetails.CardStatus == Model.CardStatus.Active)
-            result.Add(action1name);
-
-        return result;
+        return _actionPolicies
+            .Where(policy => policy.IsAllowed(cardDetails))
+            .Select(policy => policy.ActionName)
+            .ToList();
     }
 }
