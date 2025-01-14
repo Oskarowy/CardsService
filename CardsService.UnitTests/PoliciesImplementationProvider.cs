@@ -12,23 +12,17 @@ namespace CardsService.UnitTests
     {
         public IEnumerable<IActionPolicy> Implementations => GetAll<IActionPolicy>();
 
-        private static IEnumerable<T> GetAll<T>()
+        private List<IActionPolicy?> GetAll<IActionPolicy>()
         {
-            var assembly = Assembly.GetEntryAssembly();
-            var assemblies = assembly.GetReferencedAssemblies();
+            var interfaceType = typeof(IActionPolicy);
 
-            foreach (var assemblyName in assemblies)
-            {
-                assembly = Assembly.Load(assemblyName);
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                foreach (var ti in assembly.DefinedTypes)
-                {
-                    if (ti.ImplementedInterfaces.Contains(typeof(T)))
-                    {
-                        yield return (T)assembly.CreateInstance(ti.FullName);
-                    }
-                }
-            }
+            return assemblies
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => interfaceType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+            .Select(type => (IActionPolicy)Activator.CreateInstance(type))
+            .ToList();
         }
     }
 }
