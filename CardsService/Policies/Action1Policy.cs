@@ -2,9 +2,9 @@
 
 namespace CardsService.Policies
 {
-    public class Action1Policy
+    public class Action1Policy : IActionPolicy
     {
-        public string ActionName = "ACTION1";
+        public string ActionName => "ACTION1";
 
         public bool IsAllowed(CardDetails cardDetails)
         {

@@ -8,7 +8,7 @@ namespace CardsService.UnitTests
     {
         private readonly ActionService _actionService = new ActionService();
         private readonly Action1Policy _action1policy = new Action1Policy();
-        private readonly Action2Policy _action2policy = new Action1Policy();
+        private readonly Action2Policy _action2policy = new Action2Policy();
 
         #region Action1
         [Theory]
