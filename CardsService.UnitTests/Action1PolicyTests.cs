@@ -19,7 +19,7 @@ namespace CardsService.UnitTests
         {
             if (cardStatus != CardStatus.Active) return;
 
-            var testedCard = new CardDetails(_cardNumber, cardType, CardStatus.Active, isPinSet);
+            var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
 
             Assert.True(_action1policy.IsAllowed(testedCard));
         }
