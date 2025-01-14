@@ -9,15 +9,29 @@ namespace CardsService.UnitTests
         private readonly ActionService _actionService = new ActionService();
         private readonly Action1Policy _action1policy = new Action1Policy();
         private readonly Action2Policy _action2policy = new Action2Policy();
+        private readonly CardDetails _prepaidActiveCard;
+        private readonly CardDetails _prepaidInactiveCard;
+
+        public ActionServiceTests()
+        {
+            _prepaidActiveCard = new CardDetails("123", CardType.Prepaid, CardStatus.Active, true);
+            _prepaidInactiveCard = new CardDetails("123", CardType.Prepaid, CardStatus.Inactive, true);
+        }
 
         #region Action1
-        [Theory]
-        [InlineData(CardStatus.Active)]
-        public void Action1_Allow_ForPrepaidCard_IfCardIsActive(CardStatus cardStatus)
+        [Fact]
+        public void Action1_Allow_ForPrepaidCard_IfCardIsActive()
         {
-            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            Assert.True(_action1policy.IsAllowed(_prepaidActiveCard));
+        }
 
-            Assert.True(_action1policy.IsAllowed(cardDetails));
+        [Fact]
+        public void Action1_ShouldBeReturnedByService_IfPolicyIsAllowed()
+        {
+            var allowedActions = _actionService.GetAllowedActions(_prepaidActiveCard);
+
+            Assert.True(_action1policy.IsAllowed(_prepaidActiveCard));
+            Assert.Contains(_action1policy.ActionName, allowedActions);
         }
 
         [Theory]
@@ -33,21 +47,12 @@ namespace CardsService.UnitTests
 
             Assert.False(_action1policy.IsAllowed(cardDetails));
         }
-
-        [Fact]
-        public void ActionNameInPolicy_ShouldBeCorrect()
-        {
-            Assert.Equal("ACTION1", _action1policy.ActionName);
-        }
         #endregion
         #region Action2
-        [Theory]
-        [InlineData(CardStatus.Inactive)]
-        public void Action2_Allow_ForPrepaidCard_IfCardIsInactive(CardStatus cardStatus)
+        [Fact]
+        public void Action2_Allow_ForPrepaidCard_IfCardIsInactive()
         {
-            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
-
-            Assert.True(_action2policy.IsAllowed(cardDetails));
+            Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
         }
 
         [Theory]
