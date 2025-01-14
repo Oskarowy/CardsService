@@ -7,33 +7,32 @@ namespace CardsService.UnitTests
     public class Action1PolicyTests
     {
         private readonly Action1Policy _action1policy = new Action1Policy();
+        private string _cardNumber = "12345";
 
         public Action1PolicyTests()
         {
         }
 
         [Theory]
-        [InlineData(CardType.Prepaid)]
-        [InlineData(CardType.Debit)]
-        [InlineData(CardType.Credit)]
-        public void Action1_Allow_ForAnyCardType_IfCardIsActive(CardType cardType)
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action1_Allow_ForAnyCardType_IfCardIsActive_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
-            var testedCard = new CardDetails("123", cardType, CardStatus.Active, true);
+            if (cardStatus != CardStatus.Active) return;
+
+            var testedCard = new CardDetails(_cardNumber, cardType, CardStatus.Active, isPinSet);
+
             Assert.True(_action1policy.IsAllowed(testedCard));
         }
 
         [Theory]
-        [InlineData(CardStatus.Ordered)]
-        [InlineData(CardStatus.Inactive)]
-        [InlineData(CardStatus.Restricted)]
-        [InlineData(CardStatus.Blocked)]
-        [InlineData(CardStatus.Expired)]
-        [InlineData(CardStatus.Closed)]
-        public void Action1_Deny_ForPrepaidCard_IfCardIsNotActive(CardStatus cardStatus)
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action1_Deny_ForAnyCardType_IfCardIsNotActive_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
-            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            if (cardStatus == CardStatus.Active) return;
+
+            var cardDetails = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
 
             Assert.False(_action1policy.IsAllowed(cardDetails));
-        }      
+        }
     }
 }
