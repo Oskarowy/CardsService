@@ -8,81 +8,51 @@ namespace CardsService.UnitTests
     {
         private readonly ActionService _actionService;
         private readonly List<IActionPolicy> _policies;
-        private readonly Action1Policy _action1policy = new Action1Policy();
-        private readonly Action2Policy _action2policy = new Action2Policy();
-        private readonly CardDetails _prepaidActiveCard;
-        private readonly CardDetails _prepaidInactiveCard;
+        private readonly PoliciesImplementationProvider policiesImplementationProvider = new PoliciesImplementationProvider();
+        private string _cardNumber = "12345";
 
         public ActionServiceTests()
         {
-            _policies = new List<IActionPolicy> 
-            {
-                _action1policy,_action2policy
-            };
+            _policies = policiesImplementationProvider.Implementations.ToList();
             _actionService = new ActionService(_policies);
-            _prepaidActiveCard = new CardDetails("123", CardType.Prepaid, CardStatus.Active, true);
-            _prepaidInactiveCard = new CardDetails("123", CardType.Prepaid, CardStatus.Inactive, true);
-        }
-
-        #region Action1
-        [Fact]
-        public void Action1_Allow_ForPrepaidCard_IfCardIsActive()
-        {
-            Assert.True(_action1policy.IsAllowed(_prepaidActiveCard));
-        }
-
-        [Fact]
-        public void Action1_ShouldBeReturnedByService_IfPolicyIsAllowed()
-        {
-            var allowedActions = _actionService.GetAllowedActions(_prepaidActiveCard);
-
-            Assert.True(_action1policy.IsAllowed(_prepaidActiveCard));
-            Assert.Contains(_action1policy.ActionName, allowedActions);
         }
 
         [Theory]
-        [InlineData(CardStatus.Ordered)]
-        [InlineData(CardStatus.Inactive)]
-        [InlineData(CardStatus.Restricted)]
-        [InlineData(CardStatus.Blocked)]
-        [InlineData(CardStatus.Expired)]
-        [InlineData(CardStatus.Closed)]
-        public void Action1_Deny_ForPrepaidCard_IfCardIsNotActive(CardStatus cardStatus)
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action_ShouldBeReturnedByService_IfPolicyIsAllowed(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
-            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
 
-            Assert.False(_action1policy.IsAllowed(cardDetails));
-        }
-        #endregion
-        #region Action2
-        [Fact]
-        public void Action2_Allow_ForPrepaidCard_IfCardIsInactive()
-        {
-            Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
-        }
+            var allowedActions = _actionService.GetAllowedActions(testedCard);
 
-        [Fact]
-        public void Action2_ShouldBeReturnedByService_IfPolicyIsAllowed()
-        {
-            var allowedActions = _actionService.GetAllowedActions(_prepaidInactiveCard);
+            foreach (var policy in _policies)
+            {
+                var isPolicyAllowed = policy.IsAllowed(testedCard);
 
-            Assert.True(_action2policy.IsAllowed(_prepaidInactiveCard));
-            Assert.Contains(_action2policy.ActionName, allowedActions);
+                if (isPolicyAllowed)
+                    Assert.Contains(policy.ActionName, allowedActions);
+                else 
+                    Assert.False(isPolicyAllowed);
+            }
         }
 
         [Theory]
-        [InlineData(CardStatus.Ordered)]
-        [InlineData(CardStatus.Active)]
-        [InlineData(CardStatus.Restricted)]
-        [InlineData(CardStatus.Blocked)]
-        [InlineData(CardStatus.Expired)]
-        [InlineData(CardStatus.Closed)]
-        public void Action2_Deny_ForPrepaidCard_IfCardIsNotInactive(CardStatus cardStatus)
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action_ShouldBeDeniedByService_IfPolicyIsNotAllowed(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
-            var cardDetails = new CardDetails("123", CardType.Prepaid, cardStatus, true);
+            var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
 
-            Assert.False(_action2policy.IsAllowed(cardDetails));
+            var allowedActions = _actionService.GetAllowedActions(testedCard);
+
+            foreach (var policy in _policies)
+            {
+                var isPolicyAllowed = policy.IsAllowed(testedCard);
+
+                if (!isPolicyAllowed)
+                    Assert.DoesNotContain(policy.ActionName, allowedActions);
+                else 
+                    Assert.True(isPolicyAllowed);
+            }
         }
-        #endregion
     }
 }
