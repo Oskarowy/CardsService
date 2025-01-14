@@ -1,4 +1,6 @@
-﻿using CardsService.Services;
+﻿using CardsService.Model;
+using CardsService.Services;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CardsService.Policies
 {
@@ -8,7 +10,9 @@ namespace CardsService.Policies
 
         public bool IsAllowed(CardDetails cardDetails)
         {
-            return cardDetails.CardStatus == Model.CardStatus.Active;
+            var availableStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered, CardStatus.Blocked };
+
+            return availableStatuses.Contains(cardDetails.CardStatus);
         }
     }
 }
