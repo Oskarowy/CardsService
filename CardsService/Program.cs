@@ -31,6 +31,8 @@ builder.Services.AddSingleton<IActionPolicy, Action12Policy>();
 builder.Services.AddSingleton<IActionPolicy, Action13Policy>();
 builder.Services.AddScoped<CardService>();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 app.MapGet("/", () => "CardService API is running!");
@@ -69,5 +71,7 @@ app.MapPost("/api/allowed-actions", async (CardRequest? request, CardService car
 .WithName("GetAllowedActions")
 .Produces(200, typeof(object))
 .Produces(400, typeof(object));
+
+app.MapHealthChecks("/health");
 
 app.Run();
