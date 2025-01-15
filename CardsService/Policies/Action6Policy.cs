@@ -9,9 +9,12 @@ namespace CardsService.Policies
 
         public bool IsAllowed(CardDetails cardDetails)
         {
-            var availableStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered };
+            var alwaysBlockedStatuses = new List<CardStatus> { CardStatus.Restricted, CardStatus.Expired, CardStatus.Closed };
+            var pinDependingStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered };
 
-            if (availableStatuses.Contains(cardDetails.CardStatus))
+            if (alwaysBlockedStatuses.Contains(cardDetails.CardStatus)) return false;
+
+            if (pinDependingStatuses.Contains(cardDetails.CardStatus))
                 return cardDetails.IsPinSet;
 
             return true;
