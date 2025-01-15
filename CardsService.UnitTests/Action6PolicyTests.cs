@@ -25,5 +25,18 @@ namespace CardsService.UnitTests
             var policyResult = _action6policy.IsAllowed(testedCard);
             Assert.Equal(testedCard.IsPinSet, policyResult);
         }
+
+        [Theory]
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action6_Deny_ForEveryCardType_IfCardIsRestrictedExpiredClosed_NoMatterIfThereIsPIN(CardType cardType, CardStatus cardStatus, bool isPinSet)
+        {
+            var availableStatuses = new List<CardStatus> { CardStatus.Restricted, CardStatus.Expired, CardStatus.Closed };
+
+            if (!availableStatuses.Contains(cardStatus)) return;
+
+            var cardDetails = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
+
+            Assert.False(_action6policy.IsAllowed(cardDetails));
+        }
     }
 }
