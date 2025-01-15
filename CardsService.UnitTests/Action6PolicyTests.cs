@@ -62,5 +62,16 @@ namespace CardsService.UnitTests
             var policyResult = _action6policy.IsAllowed(testedCard);
             Assert.Equal(testedCard.IsPinSet, policyResult);
         }
+
+        [Theory]
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action6_Allow_ForEveryCardType_IfCardIsBlocked_AndPinIsSet(CardType cardType, CardStatus cardStatus, bool isPinSet)
+        {
+            if (cardStatus != CardStatus.Blocked || !isPinSet) return;
+
+            var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
+            var policyResult = _action6policy.IsAllowed(testedCard);
+            Assert.Equal(testedCard.IsPinSet, policyResult);
+        }
     }
 }
