@@ -1,16 +1,18 @@
 ﻿using CardsService.Model;
 using CardsService.Policies;
 using CardsService.Services;
+using Moq;
 
 namespace CardsService.UnitTests
 {
     public class CardServiceTests
     {
         private readonly CardService _cardService;
+        private readonly Mock<IExternalUserCardService> _externalUserCardService = new Mock<IExternalUserCardService>();
 
         public CardServiceTests()
-        {
-            _cardService = new CardService();
+        {        
+            _cardService = new CardService(_externalUserCardService.Object);
         }
 
         [Theory]
@@ -37,13 +39,18 @@ namespace CardsService.UnitTests
         [InlineData(CardType.Credit, CardStatus.Restricted, true, "Card218", "User2")]
         public async Task ShouldReturnCardDetails_WhenCardExists(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
         {
-            var externalServiceMock = new Mock<IExternalUserCardService>();
             var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var userCards = new Dictionary<string, Dictionary<string, CardDetails>>
+            {
+                { userId, new Dictionary<string, CardDetails> { { cardNumber, expectedCardDetails } } }
+            };
+
+            _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
 
             var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
             Assert.NotNull(cardDetails);
             Assert.Equal(expectedCardDetails, cardDetails);
-            externalServiceMock.Verify(x => x.GetUserCards(), Times.Once());
+            _externalUserCardService.Verify(x => x.GetUserCards(), Times.Once());
         }
     }
 }
