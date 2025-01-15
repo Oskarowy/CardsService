@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.Tools
 {
     public class PoliciesImplementationProvider
     {

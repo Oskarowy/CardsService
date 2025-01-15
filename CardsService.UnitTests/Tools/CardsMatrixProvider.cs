@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.Tools
 {
     public static class CardsMatrixProvider
     {

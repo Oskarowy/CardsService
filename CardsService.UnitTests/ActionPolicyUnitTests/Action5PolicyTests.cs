@@ -1,8 +1,9 @@
 ﻿using CardsService.Model;
 using CardsService.Policies;
 using CardsService.Services;
+using CardsService.Tests.Tools;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.ActionPolicyUnitTests
 {
     public class Action5PolicyTests
     {

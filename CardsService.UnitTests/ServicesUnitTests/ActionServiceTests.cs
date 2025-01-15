@@ -1,8 +1,9 @@
 ﻿using CardsService.Model;
 using CardsService.Policies;
 using CardsService.Services;
+using CardsService.Tests.Tools;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.ServicesUnitTests
 {
     public class ActionServiceTests
     {
@@ -34,7 +35,7 @@ namespace CardsService.UnitTests
                     Assert.Contains(policy.ActionName, allowedActions);
                     Assert.StartsWith(policy.ActionName.ToLower(), policy.GetType().Name.ToLower());
                 }
-                else 
+                else
                     Assert.False(isPolicyAllowed);
             }
         }
@@ -53,7 +54,7 @@ namespace CardsService.UnitTests
 
                 if (!isPolicyAllowed)
                     Assert.DoesNotContain(policy.ActionName, allowedActions);
-                else 
+                else
                     Assert.True(isPolicyAllowed);
             }
         }

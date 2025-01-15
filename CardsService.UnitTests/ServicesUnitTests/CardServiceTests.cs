@@ -1,11 +1,12 @@
 ﻿using CardsService.Model;
 using CardsService.Policies;
 using CardsService.Services;
+using CardsService.Tests.Tools;
 using Microsoft.VisualBasic;
 using Moq;
 using System.Runtime.CompilerServices;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.ServicesUnitTests
 {
     public class CardServiceTests
     {
@@ -14,7 +15,7 @@ namespace CardsService.UnitTests
         private readonly Mock<ActionService> _actionService;
 
         public CardServiceTests()
-        {        
+        {
             _actionService = new Mock<ActionService>(new List<IActionPolicy> { new FakePolicy1(), new FakePolicy2(), new FakePolicy3() });
             _cardService = new CardService(_externalUserCardService.Object, _actionService.Object);
         }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.Tools
 {
     public class FakePolicy1 : IActionPolicy
     {
