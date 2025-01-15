@@ -32,8 +32,16 @@ builder.Services.AddSingleton<IActionPolicy, Action13Policy>();
 builder.Services.AddScoped<CardService>();
 
 builder.Services.AddHealthChecks();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapGet("/", () => "CardService API is running!");
 
