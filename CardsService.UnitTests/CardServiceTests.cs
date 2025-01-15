@@ -37,11 +37,13 @@ namespace CardsService.UnitTests
         [InlineData(CardType.Credit, CardStatus.Restricted, true, "Card218", "User2")]
         public async Task ShouldReturnCardDetails_WhenCardExists(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
         {
+            var externalServiceMock = new Mock<IExternalUserCardService>();
             var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
 
             var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
             Assert.NotNull(cardDetails);
             Assert.Equal(expectedCardDetails, cardDetails);
+            externalServiceMock.Verify(x => x.GetUserCards(), Times.Once());
         }
     }
 }
