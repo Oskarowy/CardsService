@@ -16,7 +16,7 @@ public class CardService
         var userCards = await _externalUserCardService.GetUserCards();
 
         if (!userCards.TryGetValue(userId, out var cards))
-            return null;
+            throw new KeyNotFoundException("Inorrect UserId : " + userId);
 
         if (!cards.TryGetValue(cardNumber, out var cardDetails))
             throw new ArgumentException("Card with number " + cardNumber + " not found for user " + userId);

@@ -82,7 +82,7 @@ namespace CardsService.UnitTests
             };
             _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
 
-            await Assert.ThrowsAsync<ArgumentException>(() => _cardService.GetCardDetails(notExistingUser, cardNumber));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => _cardService.GetCardDetails(notExistingUser, cardNumber));
         }
     }
 }
