@@ -69,16 +69,17 @@ app.MapPost("/api/allowed-actions", async (CardRequest? request, CardService car
     }
     catch (KeyNotFoundException)
     {
-        return Results.BadRequest(new { error = "Cannot find any users with UserId : " + request.UserId });
+        return Results.NotFound(new { error = "Cannot find any users with UserId : " + request.UserId });
     }
     catch (ArgumentException)
     {
-        return Results.BadRequest(new { error = "Cannot find any cards with card number " + request.CardNumber + " for UserId " + request.UserId });
+        return Results.NotFound(new { error = "Cannot find any cards with card number " + request.CardNumber + " for UserId " + request.UserId });
     }
 })
 .WithName("GetAllowedActions")
 .Produces(200, typeof(object))
-.Produces(400, typeof(object));
+.Produces(400, typeof(object))
+.Produces(404, typeof(object));
 
 app.MapHealthChecks("/health");
 
