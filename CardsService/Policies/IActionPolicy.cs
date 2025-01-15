@@ -1,4 +1,4 @@
-﻿using CardsService.Services;
+﻿using CardsService.Model;
 
 namespace CardsService.Policies
 {

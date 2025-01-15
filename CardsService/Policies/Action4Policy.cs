@@ -1,6 +1,4 @@
-﻿using CardsService.Services;
-
-namespace CardsService.Policies
+﻿namespace CardsService.Policies
 {
     public class Action4Policy : ActionAlwaysAllowedPolicy
     {

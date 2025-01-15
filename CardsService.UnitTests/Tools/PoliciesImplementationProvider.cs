@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardsService.UnitTests
+namespace CardsService.Tests.Tools
 {
     public class PoliciesImplementationProvider
     {
@@ -20,7 +20,7 @@ namespace CardsService.UnitTests
 
             return assemblies
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => interfaceType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+            .Where(type => interfaceType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract && !type.Name.StartsWith("FakePolicy"))
             .Select(type => (IActionPolicy)Activator.CreateInstance(type))
             .ToList();
         }

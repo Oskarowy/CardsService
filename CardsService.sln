@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardsService", "CardsService\CardsService.csproj", "{CFCFB996-C703-A7AA-B96F-CC630672ED7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardsService.UnitTests", "CardsService.UnitTests\CardsService.UnitTests.csproj", "{6F8A8E79-9E1C-4049-9F2B-CCABF7DAA3DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardsService.Tests", "CardsService.UnitTests\CardsService.Tests.csproj", "{6F8A8E79-9E1C-4049-9F2B-CCABF7DAA3DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
