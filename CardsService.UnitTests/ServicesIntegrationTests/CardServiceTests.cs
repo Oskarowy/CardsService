@@ -159,5 +159,132 @@ namespace CardsService.Tests.ServicesIntegrationTests
             Assert.DoesNotContain("ACTION5", allowedActions);
         }
         #endregion
+        #region Action10, Action12, Action13 - for Ordered, Active and Inactive cards
+        [Theory]
+        [InlineData(CardType.Debit, CardStatus.Ordered, true, "Card18", "User1")]
+        [InlineData(CardType.Prepaid, CardStatus.Ordered, false, "Card11", "User1")]
+        [InlineData(CardType.Credit, CardStatus.Ordered, false, "Card315", "User3")]
+        public async Task ShouldReturnAction10and12and13_ForEveryCardType_IfCardIsOrdered(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.Contains("ACTION10", allowedActions);
+            Assert.Contains("ACTION12", allowedActions);
+            Assert.Contains("ACTION13", allowedActions);
+        }
+
+        [Theory]
+        [InlineData(CardType.Credit, CardStatus.Active, false, "Card317", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Active, true, "Card110", "User1")]
+        [InlineData(CardType.Prepaid, CardStatus.Active, false, "Card13", "User1")]
+        public async Task ShouldReturnAction10and12and13_ForEveryCardType_IfCardIsActive(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.Contains("ACTION10", allowedActions);
+            Assert.Contains("ACTION12", allowedActions);
+            Assert.Contains("ACTION13", allowedActions);
+        }
+
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Inactive, true, "Card32", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Inactive, false, "Card29", "User2")]
+        [InlineData(CardType.Credit, CardStatus.Inactive, true, "Card116", "User1")]
+        public async Task ShouldReturnAction10and12and13_ForEveryCardType_IfCardIsInactive(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.Contains("ACTION10", allowedActions);
+            Assert.Contains("ACTION12", allowedActions);
+            Assert.Contains("ACTION13", allowedActions);
+        }
+
+        [Theory]
+        [InlineData(CardType.Debit, CardStatus.Restricted, false, "Card211", "User2")]
+        [InlineData(CardType.Credit, CardStatus.Restricted, true, "Card218", "User2")]
+        public async Task ShouldNotReturnAction10or12or13_ForAnyCardType_IfCardIsRestricted(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.DoesNotContain("ACTION10", allowedActions);
+            Assert.DoesNotContain("ACTION12", allowedActions);
+            Assert.DoesNotContain("ACTION13", allowedActions);
+        }
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Blocked, false, "Card25", "User2")]  
+        [InlineData(CardType.Debit, CardStatus.Blocked, true, "Card312", "User3")]
+        public async Task ShouldNotReturnAction10or12or13_ForAnyCardType_IfCardIsBlocked(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.DoesNotContain("ACTION10", allowedActions);
+            Assert.DoesNotContain("ACTION12", allowedActions);
+            Assert.DoesNotContain("ACTION13", allowedActions);
+        }
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Expired, true, "Card26", "User2")]
+        [InlineData(CardType.Debit, CardStatus.Expired, false, "Card313", "User3")]
+        public async Task ShouldNotReturnAction10or12or13_ForAnyCardType_IfCardIsExpired(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.DoesNotContain("ACTION10", allowedActions);
+            Assert.DoesNotContain("ACTION12", allowedActions);
+            Assert.DoesNotContain("ACTION13", allowedActions);
+        }
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Closed, false, "Card37", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Closed, true, "Card314", "User3")]
+        public async Task ShouldNotReturnAction10or12or13_ForAnyCardType_IfCardIsClosed(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.DoesNotContain("ACTION10", allowedActions);
+            Assert.DoesNotContain("ACTION12", allowedActions);
+            Assert.DoesNotContain("ACTION13", allowedActions);
+        }
+        #endregion
     }
 }
