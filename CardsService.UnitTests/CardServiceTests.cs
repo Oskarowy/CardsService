@@ -56,11 +56,14 @@ namespace CardsService.UnitTests
         [Fact]
         public async Task ShouldThrow_ArgumentException_WhenCardDoesNotExists()
         {
-            var userCards = new Dictionary<string, Dictionary<string, CardDetails>>();
-
+            string userId = "User1";
+            var userCards = new Dictionary<string, Dictionary<string, CardDetails>>
+            {
+                { userId, new Dictionary<string, CardDetails>() }
+            };
             _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
 
-            await Assert.ThrowsAsync<ArgumentException>(() => _cardService.GetCardDetails("User12345", "NonExistentCardNumber"));
+            await Assert.ThrowsAsync<ArgumentException>(() => _cardService.GetCardDetails("User1", "NonExistentCardNumber"));
         }
     }
 }

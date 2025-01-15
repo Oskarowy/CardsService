@@ -15,11 +15,11 @@ public class CardService
         // to fetch the data. For this example we use generated sample data.
         var userCards = await _externalUserCardService.GetUserCards();
 
-        if (!userCards.TryGetValue(userId, out var cards)
-        || !cards.TryGetValue(cardNumber, out var cardDetails))
-        {
+        if (!userCards.TryGetValue(userId, out var cards))
             return null;
-        }
+
+        if (!cards.TryGetValue(cardNumber, out var cardDetails))
+            throw new ArgumentException("Card with number " + cardNumber + " not found for user " + userId);
         return cardDetails;
     }
    
