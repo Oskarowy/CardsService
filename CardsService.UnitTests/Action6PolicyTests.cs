@@ -19,7 +19,20 @@ namespace CardsService.UnitTests
         {
             var availableStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered };
 
-            if (!availableStatuses.Contains(cardStatus)) return;
+            if (!availableStatuses.Contains(cardStatus) || isPinSet) return;
+
+            var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
+            var policyResult = _action6policy.IsAllowed(testedCard);
+            Assert.Equal(testedCard.IsPinSet, policyResult);
+        }
+
+        [Theory]
+        [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
+        public void Action6_Allow_ForAnyCardType_IfCardIsActiveInActiveOrdered_AndPinIsSet(CardType cardType, CardStatus cardStatus, bool isPinSet)
+        {
+            var availableStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered };
+
+            if (!availableStatuses.Contains(cardStatus) || !isPinSet) return;
 
             var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
             var policyResult = _action6policy.IsAllowed(testedCard);
