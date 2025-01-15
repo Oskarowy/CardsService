@@ -1,4 +1,9 @@
+using CardsService.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IExternalUserCardService, ExternalUserCardServiceMock>();
+builder.Services.AddScoped<CardService>();
+
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
