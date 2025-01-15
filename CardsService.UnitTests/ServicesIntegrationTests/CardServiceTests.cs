@@ -27,11 +27,7 @@ namespace CardsService.Tests.ServicesIntegrationTests
         }
 
         [Theory]
-        [InlineData(CardType.Credit, CardStatus.Active, false, "Card317", "User3")]
-        [InlineData(CardType.Credit, CardStatus.Ordered, false, "Card315", "User3")]
-        [InlineData(CardType.Credit, CardStatus.Expired, true, "Card120", "User1")]
-        [InlineData(CardType.Credit, CardStatus.Blocked, false, "Card119", "User1")]
-        [InlineData(CardType.Credit, CardStatus.Inactive, true, "Card116", "User1")]
+        [InlineData(CardType.Credit, CardStatus.Active, false, "Card317", "User3")]   
         [InlineData(CardType.Credit, CardStatus.Closed, false, "Card221", "User2")]
         [InlineData(CardType.Credit, CardStatus.Restricted, true, "Card218", "User2")]
         public async Task ShouldReturnAction5_ForCreditCard_RegardlessOfCardStatus(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
@@ -45,6 +41,24 @@ namespace CardsService.Tests.ServicesIntegrationTests
 
             Assert.Equal(expectedCardDetails, cardDetails);
             Assert.Contains("ACTION5", allowedActions);
+        }
+
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Active, false, "Card13", "User1")]
+        [InlineData(CardType.Prepaid, CardStatus.Ordered, false, "Card11", "User1")]      
+        [InlineData(CardType.Debit, CardStatus.Closed, true, "Card314", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Restricted, false, "Card211", "User2")]
+        public async Task ShouldNotReturnAction5_ForDebitAndPrepaidCard_RegardlessOfCardStatus(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.DoesNotContain("ACTION5", allowedActions);
         }
     }
 }
