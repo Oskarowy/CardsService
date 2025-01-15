@@ -15,15 +15,15 @@ namespace CardsService.UnitTests
 
         [Theory]
         [MemberData(nameof(CardsMatrixProvider.AllCardsCollection), MemberType = typeof(CardsMatrixProvider))]
-        public void Action6_Deny_ForAnyCardType_IfCardIsActiveInActiveOrdered_AndPinNotSet(CardType cardType, CardStatus cardStatus, bool isPinSet)
+        public void Action6_Deny_ForEveryCardType_IfCardIsActiveInActiveOrdered_AndPinNotSet(CardType cardType, CardStatus cardStatus, bool isPinSet)
         {
             var availableStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered };
 
             if (!availableStatuses.Contains(cardStatus)) return;
 
             var testedCard = new CardDetails(_cardNumber, cardType, cardStatus, isPinSet);
-
-            Assert.False(_action6policy.IsAllowed(testedCard));
+            var policyResult = _action6policy.IsAllowed(testedCard);
+            Assert.Equal(testedCard.IsPinSet, policyResult);
         }
     }
 }
