@@ -84,5 +84,24 @@ namespace CardsService.UnitTests
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _cardService.GetCardDetails(notExistingUser, cardNumber));
         }
+
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Active, false, "Card13", "User1")]
+        public async Task ShouldReturnAllowedActions_WhenCardExists(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var userCards = new Dictionary<string, Dictionary<string, CardDetails>>
+            {
+                { userId, new Dictionary<string, CardDetails> { { cardNumber, expectedCardDetails } } }
+            };
+            var expectedActions = new List<string> { "Action1", "Action3" };
+
+            _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
+
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+            Assert.NotNull(allowedActions);
+            Assert.Equal(expectedActions, allowedActions);
+            _externalUserCardService.Verify(x => x.GetUserCards(), Times.Once());
+        }
     }
 }
