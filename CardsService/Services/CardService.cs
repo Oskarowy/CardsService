@@ -5,9 +5,11 @@ namespace CardsService.Services;
 public class CardService
 {
     private readonly IExternalUserCardService _externalUserCardService;
-    public CardService(IExternalUserCardService externalUserCardService)
+    private readonly ActionService _actionService;
+    public CardService(IExternalUserCardService externalUserCardService, ActionService actionService)
     {
         _externalUserCardService = externalUserCardService;
+        _actionService = actionService;
     }
     public async Task<CardDetails?> GetCardDetails(string userId, string cardNumber)
     {
@@ -21,6 +23,19 @@ public class CardService
         if (!cards.TryGetValue(cardNumber, out var cardDetails))
             throw new ArgumentException("Card with number " + cardNumber + " not found for user " + userId);
         return cardDetails;
+    }
+
+    public async Task<List<string>> GetCardAllowedActions(string userId, string cardNumber)
+    {
+        try
+        {
+            var cardDetails = await GetCardDetails(userId, cardNumber);
+            return _actionService.GetAllowedActions(cardDetails);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
    
 }
