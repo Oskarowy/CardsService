@@ -11,10 +11,12 @@ namespace CardsService.UnitTests
     {
         private readonly CardService _cardService;
         private readonly Mock<IExternalUserCardService> _externalUserCardService = new Mock<IExternalUserCardService>();
+        private readonly Mock<ActionService> _actionService;
 
         public CardServiceTests()
         {        
-            _cardService = new CardService(_externalUserCardService.Object);
+            _actionService = new Mock<ActionService>(new List<IActionPolicy> { new FakePolicy1(), new FakePolicy2(), new FakePolicy3() });
+            _cardService = new CardService(_externalUserCardService.Object, _actionService.Object);
         }
 
         [Theory]
@@ -85,16 +87,17 @@ namespace CardsService.UnitTests
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _cardService.GetCardDetails(notExistingUser, cardNumber));
         }
 
-        [Theory]
-        [InlineData(CardType.Prepaid, CardStatus.Active, false, "Card13", "User1")]
-        public async Task ShouldReturnAllowedActions_WhenCardExists(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        [Fact]
+        public async Task ShouldReturnAllowedActions_WhenCardExists()
         {
-            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            string userId = "User1";
+            string cardNumber = "ExistingCardNumber";
+            var expectedCardDetails = new CardDetails(cardNumber, CardType.Credit, CardStatus.Active, true);
             var userCards = new Dictionary<string, Dictionary<string, CardDetails>>
             {
                 { userId, new Dictionary<string, CardDetails> { { cardNumber, expectedCardDetails } } }
             };
-            var expectedActions = new List<string> { "Action1", "Action3" };
+            var expectedActions = new List<string> { "FAKE_ACTION1", "FAKE_ACTION2", "FAKE_ACTION3" };
 
             _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
 
