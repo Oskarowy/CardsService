@@ -26,6 +26,30 @@ namespace CardsService.Tests.ServicesIntegrationTests
             _cardService = new CardService(_externalUserCardServiceMock, _actionService);
         }
 
+        #region Action3, Action4, Action9 - no matter what
+        [Theory]
+        [InlineData(CardType.Credit, CardStatus.Blocked, false, "Card119", "User1")]
+        [InlineData(CardType.Credit, CardStatus.Inactive, true, "Card116", "User1")]
+        [InlineData(CardType.Prepaid, CardStatus.Expired, true, "Card26", "User2")]
+        [InlineData(CardType.Prepaid, CardStatus.Blocked, false, "Card25", "User2")]
+        [InlineData(CardType.Debit, CardStatus.Blocked, true, "Card312", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Inactive, false, "Card29", "User2")]
+        public async Task ShouldReturnAction3and4and9_ForEveryCardType_RegardlessOfCardStatus(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.Contains("ACTION3", allowedActions);
+            Assert.Contains("ACTION4", allowedActions);
+            Assert.Contains("ACTION9", allowedActions);
+        }
+        #endregion
+        #region Action5 - only for CreditCards
         [Theory]
         [InlineData(CardType.Credit, CardStatus.Active, false, "Card317", "User3")]   
         [InlineData(CardType.Credit, CardStatus.Closed, false, "Card221", "User2")]
@@ -60,5 +84,6 @@ namespace CardsService.Tests.ServicesIntegrationTests
             Assert.Equal(expectedCardDetails, cardDetails);
             Assert.DoesNotContain("ACTION5", allowedActions);
         }
+        #endregion
     }
 }
