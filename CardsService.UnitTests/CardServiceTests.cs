@@ -52,5 +52,15 @@ namespace CardsService.UnitTests
             Assert.Equal(expectedCardDetails, cardDetails);
             _externalUserCardService.Verify(x => x.GetUserCards(), Times.Once());
         }
+
+        [Fact]
+        public async Task ShouldThrow_ArgumentException_WhenCardDoesNotExists()
+        {
+            var userCards = new Dictionary<string, Dictionary<string, CardDetails>>();
+
+            _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _cardService.GetCardDetails("User12345", "NonExistentCardNumber"));
+        }
     }
 }
