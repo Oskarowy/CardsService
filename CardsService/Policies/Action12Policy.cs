@@ -1,6 +1,4 @@
 ﻿using CardsService.Model;
-using CardsService.Services;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CardsService.Policies
 {

@@ -2,7 +2,6 @@ using CardsService.Model;
 
 namespace CardsService.Services;
 
-public record CardDetails(string CardNumber, CardType CardType, CardStatus CardStatus, bool IsPinSet);
 public class CardService
 {
     private readonly Dictionary<string, Dictionary<string, CardDetails>> _userCards = CreateSampleUserCards();
