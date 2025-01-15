@@ -1,7 +1,9 @@
 ﻿using CardsService.Model;
 using CardsService.Policies;
 using CardsService.Services;
+using Microsoft.VisualBasic;
 using Moq;
+using System.Runtime.CompilerServices;
 
 namespace CardsService.UnitTests
 {
@@ -64,6 +66,23 @@ namespace CardsService.UnitTests
             _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
 
             await Assert.ThrowsAsync<ArgumentException>(() => _cardService.GetCardDetails("User1", "NonExistentCardNumber"));
+        }
+
+        [Fact]
+        public async Task ShouldThrow_KeyNotFoundException_WhenUserDoesNotExists()
+        {
+            string existingUser = "User1";
+            string notExistingUser = "User12345";
+            string cardNumber = "ExistingCardNumber";
+            var expectedCardDetails = new CardDetails(cardNumber, CardType.Credit, CardStatus.Active, true);
+
+            var userCards = new Dictionary<string, Dictionary<string, CardDetails>>
+            {
+                { existingUser, new Dictionary<string, CardDetails> { { cardNumber, expectedCardDetails } } }
+            };
+            _externalUserCardService.Setup(m => m.GetUserCards()).ReturnsAsync(userCards);
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _cardService.GetCardDetails(notExistingUser, cardNumber));
         }
     }
 }
