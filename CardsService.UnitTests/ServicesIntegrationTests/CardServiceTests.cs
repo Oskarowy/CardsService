@@ -26,6 +26,43 @@ namespace CardsService.Tests.ServicesIntegrationTests
             _cardService = new CardService(_externalUserCardServiceMock, _actionService);
         }
 
+        #region Action1 - only for Active cards
+        [Theory]
+        [InlineData(CardType.Credit, CardStatus.Active, false, "Card317", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Active, true, "Card110", "User1")]
+        [InlineData(CardType.Prepaid, CardStatus.Active, false, "Card13", "User1")]
+        public async Task ShouldReturnAction1_ForEveryCardType_OnlyForActiveCards(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.Contains("ACTION1", allowedActions);
+        }
+
+        [Theory]
+        [InlineData(CardType.Prepaid, CardStatus.Ordered, false, "Card11", "User1")]
+        [InlineData(CardType.Debit, CardStatus.Closed, true, "Card314", "User3")]
+        [InlineData(CardType.Debit, CardStatus.Restricted, false, "Card211", "User2")]
+        [InlineData(CardType.Credit, CardStatus.Closed, false, "Card221", "User2")]
+        [InlineData(CardType.Credit, CardStatus.Restricted, true, "Card218", "User2")]
+        public async Task ShouldNotReturnAction1_ForAnyCardType_IfCardIsNotActive(CardType cardType, CardStatus cardStatus, bool isPinSet, string cardNumber, string userId)
+        {
+            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var expectedCardDetails = new CardDetails(cardNumber, cardType, cardStatus, isPinSet);
+            var allowedActions = await _cardService.GetCardAllowedActions(userId, cardNumber);
+
+            Assert.NotNull(allowedActions);
+            Assert.NotNull(cardDetails);
+
+            Assert.Equal(expectedCardDetails, cardDetails);
+            Assert.DoesNotContain("ACTION1", allowedActions);
+        }
+        #endregion
         #region Action3, Action4, Action9 - no matter what
         [Theory]
         [InlineData(CardType.Credit, CardStatus.Blocked, false, "Card119", "User1")]
