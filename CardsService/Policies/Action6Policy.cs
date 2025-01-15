@@ -12,12 +12,15 @@ namespace CardsService.Policies
             var alwaysBlockedStatuses = new List<CardStatus> { CardStatus.Restricted, CardStatus.Expired, CardStatus.Closed };
             var pinDependingStatuses = new List<CardStatus> { CardStatus.Active, CardStatus.Inactive, CardStatus.Ordered };
 
+            if (cardDetails.CardStatus == CardStatus.Blocked)
+                return cardDetails.IsPinSet;
+
             if (alwaysBlockedStatuses.Contains(cardDetails.CardStatus)) return false;
 
             if (pinDependingStatuses.Contains(cardDetails.CardStatus))
                 return cardDetails.IsPinSet;
 
-            return true;
+            throw new NotImplementedException();
         }
     }
 }
